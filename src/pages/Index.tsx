@@ -1,110 +1,58 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Icon from "@/components/ui/icon";
 
-const NAV_LINKS = [
-  { label: "Главная", href: "#hero" },
-  { label: "Услуга", href: "#service" },
-  { label: "Преимущества", href: "#benefits" },
-  { label: "Контакты", href: "#contacts" },
-];
+const HERO_IMG = "https://cdn.poehali.dev/projects/a9daea41-11b0-46df-a398-ee39679bfc45/files/135b2fd6-b3d8-46f7-9b45-854411ca568e.jpg";
+const CABIN_IMG = "https://cdn.poehali.dev/projects/a9daea41-11b0-46df-a398-ee39679bfc45/files/408c25e0-83d9-441d-af53-340e791a2dc0.jpg";
+const BANYA_IMG = "https://cdn.poehali.dev/projects/a9daea41-11b0-46df-a398-ee39679bfc45/files/8da52026-6c41-4ae2-a045-8db97de38cce.jpg";
+const FAMILY_IMG = "https://cdn.poehali.dev/projects/a9daea41-11b0-46df-a398-ee39679bfc45/files/f46ea525-9103-481b-9498-645a05313e3d.jpg";
 
-const BENEFITS = [
-  {
-    icon: "Zap",
-    title: "Молниеносная скорость",
-    desc: "Результат уже через 24 часа. Без бюрократии и затяжных согласований.",
-    color: "#FFD60A",
-  },
-  {
-    icon: "ShieldCheck",
-    title: "Гарантия качества",
-    desc: "Каждый проект проходит контроль на всех этапах. Ваш результат — наша репутация.",
-    color: "#00F5FF",
-  },
-  {
-    icon: "TrendingUp",
-    title: "Измеримый рост",
-    desc: "Отслеживаем метрики и корректируем стратегию под ваши бизнес-цели.",
-    color: "#FF006E",
-  },
-  {
-    icon: "Users",
-    title: "Команда экспертов",
-    desc: "Профессионалы с опытом 7+ лет в ведущих компаниях рынка.",
-    color: "#39FF14",
-  },
-  {
-    icon: "Headphones",
-    title: "Поддержка 24/7",
-    desc: "Всегда на связи. Отвечаем в течение 15 минут в любое время суток.",
-    color: "#A855F7",
-  },
-  {
-    icon: "Star",
-    title: "Индивидуальный подход",
-    desc: "Каждое решение создаётся под уникальные задачи вашего бизнеса.",
-    color: "#FF8C00",
-  },
-];
-
-function useIntersection(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
+function useScrollReveal() {
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("visible");
+            observer.unobserve(e.target);
+          }
+        });
       },
-      { threshold }
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
     );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-
-  return { ref, visible };
+    document.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 }
 
-function AnimatedSection({
+function FadeUp({
   children,
   className = "",
+  style = {},
 }: {
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
-  const { ref, visible } = useIntersection();
   return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-      } ${className}`}
-    >
+    <div className={`fade-up ${className}`} style={style}>
       {children}
     </div>
   );
 }
 
 export default function Index() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    checkin: "",
+    guests: "",
+    comment: "",
+  });
+  useScrollReveal();
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const scrollTo = (href: string) => {
-    setMenuOpen(false);
-    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -113,482 +61,1140 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-background font-body overflow-x-hidden">
-
-      {/* NAV */}
+    <div
+      className="min-h-screen overflow-x-hidden"
+      style={{ background: "#f7f5f0", color: "#1a1712", fontFamily: "Inter, Helvetica Neue, sans-serif" }}
+    >
+      {/* ── NAV ── */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? "glass py-3" : "py-5"
-        }`}
+        className="sticky top-0 z-50 border-b"
+        style={{
+          background: "rgba(247,245,240,0.93)",
+          backdropFilter: "blur(16px)",
+          borderColor: "rgba(26,23,18,0.06)",
+          padding: "14px 24px",
+        }}
       >
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-          <button
-            onClick={() => scrollTo("#hero")}
-            className="font-display text-xl font-bold text-gradient-cyan tracking-wider"
-          >
-            БРЕНД
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+          <button onClick={() => scrollTo("hero")} className="flex items-center gap-3 text-left">
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center text-white text-lg flex-shrink-0"
+              style={{ background: "#0a6b70" }}
+            >
+              🌊
+            </div>
+            <div>
+              <div
+                className="font-bold leading-tight"
+                style={{ fontFamily: "Playfair Display, Georgia, serif", fontSize: "1.1rem" }}
+              >
+                МоёМоре
+              </div>
+              <div className="text-xs uppercase tracking-widest" style={{ color: "#6b6760" }}>
+                База отдыха
+              </div>
+            </div>
           </button>
 
-          <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((l) => (
+          <div className="hidden md:flex items-center gap-1">
+            {[
+              ["services", "Услуги"],
+              ["packages", "Пакеты"],
+              ["reviews", "Отзывы"],
+            ].map(([id, label]) => (
               <button
-                key={l.href}
-                onClick={() => scrollTo(l.href)}
-                className="text-sm font-medium text-white/70 hover:text-[#00F5FF] transition-colors duration-200"
+                key={id}
+                onClick={() => scrollTo(id)}
+                className="text-sm font-medium px-3 py-2 rounded-lg transition-all hover:bg-black/5"
+                style={{ color: "#6b6760" }}
               >
-                {l.label}
+                {label}
               </button>
             ))}
-            <button
-              onClick={() => scrollTo("#contacts")}
-              className="px-5 py-2 rounded-full text-sm font-semibold bg-[#00F5FF] text-[#0a0f1a] hover:bg-white transition-all hover:scale-105 glow-cyan"
-            >
-              Связаться
-            </button>
           </div>
 
           <button
-            className="md:hidden text-white"
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={() => scrollTo("booking")}
+            className="text-sm font-semibold px-5 py-2.5 rounded-full text-white transition-all hover:opacity-90"
+            style={{ background: "#0a6b70" }}
           >
-            <Icon name={menuOpen ? "X" : "Menu"} size={24} />
+            Забронировать →
           </button>
         </div>
-
-        {menuOpen && (
-          <div className="md:hidden glass mt-2 mx-4 rounded-2xl p-4 flex flex-col gap-3">
-            {NAV_LINKS.map((l) => (
-              <button
-                key={l.href}
-                onClick={() => scrollTo(l.href)}
-                className="text-left py-2 text-white/80 hover:text-[#00F5FF] transition-colors"
-              >
-                {l.label}
-              </button>
-            ))}
-          </div>
-        )}
       </nav>
 
-      {/* HERO */}
+      {/* ── HERO ── */}
       <section
         id="hero"
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        className="relative flex items-end overflow-hidden"
+        style={{ minHeight: "100svh" }}
       >
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-80 h-80 rounded-full bg-[#00F5FF]/10 blur-[100px] animate-float" />
-          <div
-            className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full bg-[#FF006E]/10 blur-[120px] animate-float"
-            style={{ animationDelay: "2s" }}
+        <div className="absolute inset-0">
+          <img
+            src={HERO_IMG}
+            alt="База отдыха у моря"
+            className="w-full h-full object-cover"
           />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#0080FF]/5 blur-[150px]" />
           <div
-            className="absolute inset-0 opacity-[0.04]"
+            className="absolute inset-0"
             style={{
-              backgroundImage:
-                "linear-gradient(#00F5FF 1px, transparent 1px), linear-gradient(90deg, #00F5FF 1px, transparent 1px)",
-              backgroundSize: "60px 60px",
+              background:
+                "linear-gradient(to top, rgba(10,8,5,0.88) 0%, rgba(10,8,5,0.28) 50%, rgba(10,8,5,0.08) 100%)",
             }}
           />
-          <div className="absolute top-20 right-20 w-32 h-32 rounded-full border border-[#00F5FF]/20 animate-spin-slow" />
-          <div
-            className="absolute top-20 right-20 w-20 h-20 rounded-full border border-[#FF006E]/20 animate-spin-slow"
-            style={{ animationDirection: "reverse", animationDuration: "12s" }}
-          />
-          <div className="absolute bottom-20 left-20 w-24 h-24 rounded-full border border-[#FFD60A]/15 animate-spin-slow" />
         </div>
 
-        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-          <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 text-sm text-[#00F5FF] mb-8 animate-fade-in">
-            <div className="w-2 h-2 rounded-full bg-[#00F5FF] animate-pulse" />
-            Новый уровень вашего бизнеса
+        <div
+          className="relative z-10 max-w-6xl mx-auto w-full px-6 sm:px-10"
+          style={{ paddingBottom: "clamp(3rem,8vw,6rem)", paddingTop: "5rem" }}
+        >
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest mb-6"
+            style={{
+              background: "rgba(212,133,10,0.22)",
+              border: "1px solid rgba(212,133,10,0.45)",
+              color: "#f5c06a",
+            }}
+          >
+            🌊 Лето 2026 · Июнь — Сентябрь
           </div>
 
           <h1
-            className="font-display font-bold text-5xl sm:text-7xl lg:text-8xl leading-none mb-6 animate-fade-up"
-            style={{ letterSpacing: "-0.02em" }}
+            className="font-bold text-white mb-6"
+            style={{
+              fontFamily: "Playfair Display, Georgia, serif",
+              fontSize: "clamp(2.8rem,6vw,6rem)",
+              lineHeight: 1.05,
+              maxWidth: "14ch",
+            }}
           >
-            <span className="text-white">МЫ ДЕЛАЕМ</span>
+            Уйди от города.
             <br />
-            <span className="text-gradient">РЕЗУЛЬТАТ</span>
+            <em style={{ color: "#f0b940", fontStyle: "normal" }}>Войди в море.</em>
           </h1>
 
-          <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Профессиональные услуги для роста вашего бизнеса.
-            <br />
-            Без лишних слов — только измеримые результаты.
+          <p
+            className="mb-10 font-light"
+            style={{
+              fontSize: "clamp(1.1rem,2vw,1.4rem)",
+              color: "rgba(255,255,255,0.75)",
+              maxWidth: "50ch",
+            }}
+          >
+            Собственный пляж, уютные домики и настоящий отдых для всей семьи — в самом
+            живописном уголке у воды.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-wrap gap-4 mb-6">
             <button
-              onClick={() => scrollTo("#contacts")}
-              className="group relative px-8 py-4 rounded-full font-semibold text-[#0a0f1a] bg-[#00F5FF] hover:bg-white transition-all duration-300 hover:scale-105 glow-cyan"
+              onClick={() => scrollTo("booking")}
+              className="inline-flex items-center gap-3 font-semibold rounded-full text-white transition-all hover:opacity-90"
+              style={{ background: "#0a6b70", padding: "14px 32px", fontSize: "1rem" }}
             >
-              Получить консультацию
+              <span>Забронировать место</span>
+              <Icon name="ArrowRight" size={18} />
             </button>
             <button
-              onClick={() => scrollTo("#service")}
-              className="px-8 py-4 rounded-full font-semibold text-white border border-white/20 hover:border-[#00F5FF]/50 hover:bg-white/5 transition-all duration-300"
+              onClick={() => scrollTo("packages")}
+              className="font-medium rounded-full transition-all hover:bg-white/20"
+              style={{
+                background: "rgba(255,255,255,0.14)",
+                color: "#fff",
+                padding: "14px 32px",
+                border: "1px solid rgba(255,255,255,0.28)",
+                backdropFilter: "blur(8px)",
+                fontSize: "1rem",
+              }}
             >
-              Узнать об услуге
+              Смотреть пакеты
             </button>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 mt-20">
-            {[
-              { num: "500+", label: "клиентов" },
-              { num: "98%", label: "довольны" },
-              { num: "7 лет", label: "на рынке" },
-            ].map((s) => (
-              <div key={s.label} className="glass rounded-2xl p-4">
-                <div className="font-display text-2xl sm:text-3xl font-bold text-gradient-cyan">
-                  {s.num}
-                </div>
-                <div className="text-xs sm:text-sm text-white/50 mt-1">{s.label}</div>
-              </div>
-            ))}
+          <div
+            className="flex items-center gap-2"
+            style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.8rem" }}
+          >
+            <div
+              className="w-2 h-2 rounded-full pulse-dot flex-shrink-0"
+              style={{ background: "#4ade80" }}
+            />
+            <span>Осталось 6 свободных домиков на июль — август</span>
           </div>
-        </div>
-
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-float">
-          <span className="text-xs text-white/30 tracking-widest">SCROLL</span>
-          <Icon name="ChevronDown" size={20} className="text-[#00F5FF]/50" />
         </div>
       </section>
 
-      {/* SERVICE */}
-      <section id="service" className="py-24 px-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-[#FF006E]/8 blur-[120px] pointer-events-none" />
+      {/* ── PROMISES ── */}
+      <section style={{ background: "#fdfcf9", padding: "clamp(3rem,8vw,5rem) 24px" }}>
+        <div className="max-w-6xl mx-auto grid sm:grid-cols-3 gap-5">
+          {[
+            {
+              icon: "🏖️",
+              title: "Своё море",
+              text: "Закрытый пляж только для наших гостей. Чистый песок, тихая вода, лежаки и зонты — без посторонних.",
+            },
+            {
+              icon: "🏡",
+              title: "Живёшь как дома",
+              text: "Уютные деревянные домики с кондиционером, чистым бельём, кухней и видом на море из окна.",
+            },
+            {
+              icon: "🎉",
+              title: "Отдыхаешь как на курорте",
+              text: "Баня, SUP, мангал, анимация для детей — вся инфраструктура включена в стоимость территории.",
+            },
+          ].map((p, i) => (
+            <FadeUp key={p.title} style={{ transitionDelay: `${i * 100}ms` }}>
+              <div
+                className="card-hover rounded-2xl p-8 h-full"
+                style={{ background: "#f7f5f0", border: "1px solid #ddd9d0" }}
+              >
+                <div className="text-4xl mb-4 leading-none">{p.icon}</div>
+                <h3
+                  className="font-bold mb-3"
+                  style={{
+                    fontFamily: "Playfair Display, Georgia, serif",
+                    fontSize: "1.2rem",
+                  }}
+                >
+                  {p.title}
+                </h3>
+                <p style={{ fontSize: "0.925rem", color: "#6b6760", lineHeight: 1.7 }}>
+                  {p.text}
+                </p>
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+      </section>
 
+      {/* ── FOR WHOM ── */}
+      <section
+        id="for-whom"
+        style={{ background: "#f7f5f0", padding: "clamp(4rem,8vw,6rem) 24px" }}
+      >
         <div className="max-w-6xl mx-auto">
-          <AnimatedSection>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-1 bg-[#FF006E] rounded-full" />
-              <span className="text-[#FF006E] text-sm font-semibold uppercase tracking-widest">
-                Что мы делаем
-              </span>
+          <FadeUp>
+            <div
+              className="text-xs font-bold uppercase tracking-widest mb-3"
+              style={{ color: "#0a6b70" }}
+            >
+              Для кого
             </div>
-            <h2 className="font-display text-4xl sm:text-5xl font-bold text-white mb-4">
-              НАША <span className="text-gradient">УСЛУГА</span>
+          </FadeUp>
+          <FadeUp>
+            <h2
+              className="font-bold mb-4"
+              style={{
+                fontFamily: "Playfair Display, Georgia, serif",
+                fontSize: "clamp(2rem,4vw,3rem)",
+              }}
+            >
+              Тебе сюда, если ты...
             </h2>
-            <p className="text-white/50 text-lg max-w-xl">
-              Полный цикл работ под ключ — от идеи до результата.
+          </FadeUp>
+          <FadeUp>
+            <p className="mb-12" style={{ fontSize: "1.05rem", color: "#6b6760", maxWidth: "52ch" }}>
+              Мы не пытаемся быть для всех. Мы создаём идеальный отдых для тех, кто
+              ценит настоящее море и настоящий покой.
             </p>
-          </AnimatedSection>
+          </FadeUp>
 
-          <div className="mt-12 grid md:grid-cols-2 gap-8 items-center">
-            <AnimatedSection>
-              <div className="space-y-6">
-                {[
-                  {
-                    step: "01",
-                    title: "Анализ и стратегия",
-                    desc: "Глубоко изучаем ваш бизнес и рынок, формируем чёткий план действий.",
-                  },
-                  {
-                    step: "02",
-                    title: "Разработка и создание",
-                    desc: "Команда экспертов реализует проект в срок и в рамках бюджета.",
-                  },
-                  {
-                    step: "03",
-                    title: "Запуск и поддержка",
-                    desc: "Сопровождаем на всех этапах и гарантируем стабильный результат.",
-                  },
-                ].map((item, i) => (
+          <div className="grid sm:grid-cols-2 gap-5">
+            {[
+              {
+                icon: "👨‍👩‍👧",
+                title: "Семья с детьми",
+                text: "Дети заняты с утра до вечера — аниматор, батут, горки, мастер-классы. А вы просто лежите у воды и дышите.",
+              },
+              {
+                icon: "💑",
+                title: "Пара",
+                text: "Закрытые беседки, чан на двоих у воды, романтический ужин под заказ, закат с бокалом вина.",
+              },
+              {
+                icon: "👫",
+                title: "Компания друзей",
+                text: "Большие домики на 6–8 человек, мангальная зона, волейбол, баня, и своя вечеринка под звёздами.",
+              },
+              {
+                icon: "🧘",
+                title: "Хочешь просто выдохнуть",
+                text: "Никаких гостиничных правил. Только море, воздух, тишина и ты. Именно за этим сюда возвращаются снова.",
+              },
+            ].map((s, i) => (
+              <FadeUp key={s.title} style={{ transitionDelay: `${(i % 2) * 80}ms` }}>
+                <div
+                  className="card-hover rounded-2xl p-8 flex gap-5"
+                  style={{ background: "#fdfcf9", border: "1px solid #ddd9d0" }}
+                >
+                  <div className="text-4xl leading-none flex-shrink-0">{s.icon}</div>
+                  <div>
+                    <h3
+                      className="font-bold mb-2"
+                      style={{
+                        fontFamily: "Playfair Display, Georgia, serif",
+                        fontSize: "1.15rem",
+                      }}
+                    >
+                      {s.title}
+                    </h3>
+                    <p style={{ fontSize: "0.9rem", color: "#6b6760", lineHeight: 1.7 }}>
+                      {s.text}
+                    </p>
+                  </div>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── GALLERY ── */}
+      <section id="gallery" style={{ background: "#fdfcf9", padding: "clamp(4rem,8vw,6rem) 24px" }}>
+        <div className="max-w-6xl mx-auto">
+          <FadeUp>
+            <div
+              className="text-xs font-bold uppercase tracking-widest mb-3"
+              style={{ color: "#0a6b70" }}
+            >
+              Атмосфера
+            </div>
+          </FadeUp>
+          <FadeUp>
+            <h2
+              className="font-bold mb-10"
+              style={{
+                fontFamily: "Playfair Display, Georgia, serif",
+                fontSize: "clamp(2rem,4vw,3rem)",
+              }}
+            >
+              Это место нужно увидеть
+            </h2>
+          </FadeUp>
+
+          <FadeUp>
+            <div
+              className="grid grid-cols-2 md:grid-cols-4 rounded-2xl overflow-hidden gap-1"
+              style={{ height: "clamp(300px,45vw,520px)" }}
+            >
+              <div className="gallery-item col-span-2" style={{ gridRow: "span 2" }}>
+                <img src={HERO_IMG} alt="Бухта базы отдыха" />
+              </div>
+              <div className="gallery-item">
+                <img src={CABIN_IMG} alt="Уютный домик" />
+              </div>
+              <div className="gallery-item">
+                <img src={BANYA_IMG} alt="Чан у моря" />
+              </div>
+              <div className="gallery-item">
+                <img src={FAMILY_IMG} alt="Семья на пляже" />
+              </div>
+              <div
+                className="gallery-item flex items-center justify-center"
+                style={{
+                  background: "linear-gradient(135deg, #d0e8e8 0%, #0a6b70 100%)",
+                }}
+              >
+                <div className="text-center text-white p-4">
+                  <div className="text-4xl mb-1">🌅</div>
                   <div
-                    key={item.step}
-                    className="glass glass-hover rounded-2xl p-6 cursor-default"
-                    style={{ transitionDelay: `${i * 100}ms` }}
+                    className="font-bold text-sm"
+                    style={{ fontFamily: "Playfair Display, Georgia, serif" }}
                   >
-                    <div className="flex items-start gap-4">
-                      <span className="font-display text-3xl font-bold text-[#00F5FF]/30">
-                        {item.step}
-                      </span>
-                      <div>
-                        <h3 className="font-semibold text-white text-lg mb-1">
-                          {item.title}
-                        </h3>
-                        <p className="text-white/50 text-sm leading-relaxed">
-                          {item.desc}
-                        </p>
-                      </div>
+                    Каждый вечер
+                  </div>
+                  <div className="text-xs opacity-80">такой закат</div>
+                </div>
+              </div>
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* ── SERVICES ── */}
+      <section
+        id="services"
+        style={{ background: "#f7f5f0", padding: "clamp(4rem,8vw,6rem) 24px" }}
+      >
+        <div className="max-w-6xl mx-auto">
+          <FadeUp>
+            <div
+              className="text-xs font-bold uppercase tracking-widest mb-3"
+              style={{ color: "#0a6b70" }}
+            >
+              Что у нас есть
+            </div>
+          </FadeUp>
+          <FadeUp>
+            <h2
+              className="font-bold mb-3"
+              style={{
+                fontFamily: "Playfair Display, Georgia, serif",
+                fontSize: "clamp(2rem,4vw,3rem)",
+              }}
+            >
+              Всё для настоящего отдыха
+            </h2>
+          </FadeUp>
+          <FadeUp>
+            <p className="mb-12" style={{ fontSize: "1.05rem", color: "#6b6760", maxWidth: "52ch" }}>
+              Мы продаём не койко-место. Мы создаём готовый сценарий летнего счастья.
+            </p>
+          </FadeUp>
+
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
+            {[
+              {
+                icon: "🏄",
+                title: "Водные активности",
+                text: "Прокат SUP-досок, каяков, катамаранов. Снаряжение для дайвинга и рыбалки. Инструктор по запросу.",
+              },
+              {
+                icon: "🔥",
+                title: "Баня и чан",
+                text: "Русская баня на берегу с купелью. Деревянный чан у воды с видом на море. Бронирование за 1 день.",
+              },
+              {
+                icon: "🍽️",
+                title: "Питание",
+                text: "Домашние завтраки, шведский стол или доставка в домик. Мангальные зоны с углём и дровами в подарок.",
+              },
+              {
+                icon: "🎈",
+                title: "Детская анимация",
+                text: "Аниматор каждые выходные. Батут, творческие мастер-классы, игровые зоны. Дети счастливы — родители отдыхают.",
+              },
+              {
+                icon: "🏊",
+                title: "Бассейн и пляж",
+                text: "Открытый бассейн с мая по сентябрь. Собственный пляж с лежаками, зонтами и чистым песком.",
+              },
+              {
+                icon: "⚡",
+                title: "Инфраструктура",
+                text: "Охрана 24/7, парковка, Wi-Fi, электричество и вода круглосуточно. Кондиционер в каждом домике.",
+              },
+            ].map((s, i) => (
+              <FadeUp key={s.title} style={{ transitionDelay: `${(i % 3) * 80}ms` }}>
+                <div
+                  className="card-hover rounded-2xl p-6 h-full"
+                  style={{ background: "#fdfcf9", border: "1px solid #ddd9d0" }}
+                >
+                  <div className="text-3xl mb-4 leading-none">{s.icon}</div>
+                  <h3
+                    className="font-bold mb-2"
+                    style={{
+                      fontFamily: "Playfair Display, Georgia, serif",
+                      fontSize: "1.05rem",
+                    }}
+                  >
+                    {s.title}
+                  </h3>
+                  <p style={{ fontSize: "0.875rem", color: "#6b6760", lineHeight: 1.65 }}>
+                    {s.text}
+                  </p>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PACKAGES ── */}
+      <section
+        id="packages"
+        style={{ background: "#fdfcf9", padding: "clamp(4rem,8vw,6rem) 24px" }}
+      >
+        <div className="max-w-6xl mx-auto">
+          <FadeUp>
+            <div
+              className="text-xs font-bold uppercase tracking-widest mb-3 text-center"
+              style={{ color: "#0a6b70" }}
+            >
+              Пакеты отдыха
+            </div>
+          </FadeUp>
+          <FadeUp>
+            <h2
+              className="font-bold mb-3 text-center"
+              style={{
+                fontFamily: "Playfair Display, Georgia, serif",
+                fontSize: "clamp(2rem,4vw,3rem)",
+              }}
+            >
+              Не просто ночёвка — готовый сценарий
+            </h2>
+          </FadeUp>
+          <FadeUp>
+            <p
+              className="mb-12 text-center mx-auto"
+              style={{ fontSize: "1.05rem", color: "#6b6760", maxWidth: "52ch" }}
+            >
+              Выбери свой формат. Всё уже продумано — просто приедь и наслаждайся.
+            </p>
+          </FadeUp>
+
+          <div className="grid sm:grid-cols-3 gap-6">
+            {/* Family */}
+            <FadeUp>
+              <div
+                className="card-hover rounded-2xl p-8 flex flex-col h-full"
+                style={{ background: "#f7f5f0", border: "1px solid #ddd9d0" }}
+              >
+                <div className="text-3xl mb-4">🌅</div>
+                <h3
+                  className="font-bold mb-1"
+                  style={{
+                    fontFamily: "Playfair Display, Georgia, serif",
+                    fontSize: "1.4rem",
+                  }}
+                >
+                  Семейный отдых
+                </h3>
+                <p style={{ fontSize: "0.875rem", color: "#6b6760", marginBottom: "1.5rem" }}>
+                  3 ночи для семьи с детьми
+                </p>
+                <div style={{ fontSize: "0.875rem", color: "#6b6760", textDecoration: "line-through", marginBottom: "4px" }}>
+                  18 000 ₽
+                </div>
+                <div
+                  className="font-bold mb-6"
+                  style={{
+                    fontFamily: "Playfair Display, Georgia, serif",
+                    fontSize: "1.8rem",
+                    color: "#0a6b70",
+                  }}
+                >
+                  15 900 ₽
+                </div>
+                <ul className="flex flex-col gap-3 flex-1 mb-8">
+                  {[
+                    "Проживание 3 ночи",
+                    "Завтраки включены",
+                    "Детская анимация",
+                    "1 час бани в подарок",
+                    "Пляж и бассейн",
+                  ].map((f) => (
+                    <li
+                      key={f}
+                      className="flex items-start gap-3"
+                      style={{ fontSize: "0.875rem", color: "#6b6760" }}
+                    >
+                      <span style={{ color: "#0a6b70", fontWeight: 700 }}>✓</span> {f}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => scrollTo("booking")}
+                  className="w-full rounded-full font-semibold transition-all hover:bg-[#0a6b70] hover:text-white"
+                  style={{
+                    padding: "14px",
+                    border: "2px solid #0a6b70",
+                    color: "#0a6b70",
+                    background: "transparent",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Выбрать пакет
+                </button>
+              </div>
+            </FadeUp>
+
+            {/* Romantic — Featured */}
+            <FadeUp style={{ transitionDelay: "80ms" }}>
+              <div
+                className="card-hover rounded-2xl p-8 flex flex-col h-full relative"
+                style={{ background: "#0a6b70", border: "1px solid #0a6b70", color: "#fff" }}
+              >
+                <div
+                  className="absolute left-1/2 -translate-x-1/2 -top-4 px-4 py-1.5 rounded-full text-xs font-bold text-white"
+                  style={{ background: "#d4850a", whiteSpace: "nowrap" }}
+                >
+                  🔥 Хит сезона
+                </div>
+                <div className="text-3xl mb-4">💑</div>
+                <h3
+                  className="font-bold mb-1"
+                  style={{
+                    fontFamily: "Playfair Display, Georgia, serif",
+                    fontSize: "1.4rem",
+                  }}
+                >
+                  Романтик
+                </h3>
+                <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.7)", marginBottom: "1.5rem" }}>
+                  2 ночи для двоих
+                </p>
+                <div style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.5)", textDecoration: "line-through", marginBottom: "4px" }}>
+                  12 000 ₽
+                </div>
+                <div
+                  className="font-bold mb-6"
+                  style={{
+                    fontFamily: "Playfair Display, Georgia, serif",
+                    fontSize: "1.8rem",
+                  }}
+                >
+                  9 900 ₽
+                </div>
+                <ul className="flex flex-col gap-3 flex-1 mb-8">
+                  {[
+                    "Домик с видом на море",
+                    "Ужин при свечах",
+                    "Чан у воды на 2 часа",
+                    "Букет и бокал вина",
+                    "Поздний выезд",
+                  ].map((f) => (
+                    <li
+                      key={f}
+                      className="flex items-start gap-3"
+                      style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.75)" }}
+                    >
+                      <span style={{ color: "#b9eaed", fontWeight: 700 }}>✓</span> {f}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => scrollTo("booking")}
+                  className="w-full rounded-full font-semibold transition-all hover:opacity-90"
+                  style={{
+                    padding: "14px",
+                    background: "#fff",
+                    color: "#0a6b70",
+                    border: "2px solid #fff",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Выбрать пакет
+                </button>
+              </div>
+            </FadeUp>
+
+            {/* Group */}
+            <FadeUp style={{ transitionDelay: "160ms" }}>
+              <div
+                className="card-hover rounded-2xl p-8 flex flex-col h-full"
+                style={{ background: "#f7f5f0", border: "1px solid #ddd9d0" }}
+              >
+                <div className="text-3xl mb-4">👥</div>
+                <h3
+                  className="font-bold mb-1"
+                  style={{
+                    fontFamily: "Playfair Display, Georgia, serif",
+                    fontSize: "1.4rem",
+                  }}
+                >
+                  Компания
+                </h3>
+                <p style={{ fontSize: "0.875rem", color: "#6b6760", marginBottom: "1.5rem" }}>
+                  Большой домик 6–8 человек
+                </p>
+                <div style={{ height: "22px", marginBottom: "4px" }} />
+                <div
+                  className="font-bold mb-6"
+                  style={{
+                    fontFamily: "Playfair Display, Georgia, serif",
+                    fontSize: "1.8rem",
+                    color: "#0a6b70",
+                  }}
+                >
+                  от 24 000 ₽/ночь
+                </div>
+                <ul className="flex flex-col gap-3 flex-1 mb-8">
+                  {[
+                    "Домик 6–8 мест",
+                    "Мангальная зона",
+                    "SUP × 4 в подарок",
+                    "Баня на вечер",
+                    "Волейбол, настолки",
+                  ].map((f) => (
+                    <li
+                      key={f}
+                      className="flex items-start gap-3"
+                      style={{ fontSize: "0.875rem", color: "#6b6760" }}
+                    >
+                      <span style={{ color: "#0a6b70", fontWeight: 700 }}>✓</span> {f}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => scrollTo("booking")}
+                  className="w-full rounded-full font-semibold transition-all hover:bg-[#0a6b70] hover:text-white"
+                  style={{
+                    padding: "14px",
+                    border: "2px solid #0a6b70",
+                    color: "#0a6b70",
+                    background: "transparent",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Выбрать пакет
+                </button>
+              </div>
+            </FadeUp>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TRUST ── */}
+      <section
+        style={{
+          background: "#fdfcf9",
+          padding: "clamp(3rem,6vw,5rem) 24px",
+          borderTop: "1px solid #ddd9d0",
+          borderBottom: "1px solid #ddd9d0",
+        }}
+      >
+        <div className="max-w-6xl mx-auto">
+          <FadeUp>
+            <div
+              className="text-xs font-bold uppercase tracking-widest mb-10 text-center"
+              style={{ color: "#0a6b70" }}
+            >
+              Нам доверяют
+            </div>
+          </FadeUp>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { num: "7+", label: "лет принимаем гостей каждое лето" },
+              { num: "4.9★", label: "рейтинг на Яндекс.Картах из 300+ отзывов" },
+              { num: "68%", label: "гостей возвращаются к нам повторно" },
+              { num: "30%", label: "предоплата — остаток при заезде" },
+            ].map((t, i) => (
+              <FadeUp key={t.num} style={{ transitionDelay: `${i * 70}ms` }}>
+                <div className="text-center p-6">
+                  <div
+                    className="font-bold mb-2"
+                    style={{
+                      fontFamily: "Playfair Display, Georgia, serif",
+                      fontSize: "clamp(2rem,3.5vw,3.2rem)",
+                      color: "#0a6b70",
+                    }}
+                  >
+                    {t.num}
+                  </div>
+                  <div style={{ fontSize: "0.875rem", color: "#6b6760", lineHeight: 1.5 }}>
+                    {t.label}
+                  </div>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── REVIEWS ── */}
+      <section
+        id="reviews"
+        style={{ background: "#f7f5f0", padding: "clamp(4rem,8vw,6rem) 24px" }}
+      >
+        <div className="max-w-6xl mx-auto">
+          <FadeUp>
+            <div
+              className="text-xs font-bold uppercase tracking-widest mb-3"
+              style={{ color: "#0a6b70" }}
+            >
+              Отзывы гостей
+            </div>
+          </FadeUp>
+          <FadeUp>
+            <h2
+              className="font-bold mb-12"
+              style={{
+                fontFamily: "Playfair Display, Georgia, serif",
+                fontSize: "clamp(2rem,4vw,3rem)",
+              }}
+            >
+              Они были. И вернулись снова.
+            </h2>
+          </FadeUp>
+
+          <div className="grid sm:grid-cols-3 gap-5">
+            {[
+              {
+                initial: "А",
+                name: "Анна Смирнова",
+                city: "Владивосток",
+                text: "«Приехали на 3 дня — продлили до 7. Дети не хотели уезжать, муж уже бронирует на август. Такой красоты и тишины мы давно не видели!»",
+              },
+              {
+                initial: "М",
+                name: "Михаил Козлов",
+                city: "Хабаровск",
+                text: "«Чистота, вкусная еда, душевный персонал. Ощущение, что ты дома — только с морем за окном. Отдельный респект за баню у воды.»",
+              },
+              {
+                initial: "О",
+                name: "Семья Петровых",
+                city: "Уссурийск",
+                text: "«Были уже второй раз и возвращаемся в сентябре. Нигде такого соотношения цены и качества не видели. Рекомендуем всем без исключения!»",
+              },
+            ].map((r, i) => (
+              <FadeUp key={r.name} style={{ transitionDelay: `${i * 100}ms` }}>
+                <div
+                  className="rounded-2xl p-8 flex flex-col gap-5 h-full"
+                  style={{ background: "#fdfcf9", border: "1px solid #ddd9d0" }}
+                >
+                  <div style={{ color: "#d4850a", letterSpacing: "2px", fontSize: "1rem" }}>
+                    ★★★★★
+                  </div>
+                  <p
+                    className="flex-1 italic"
+                    style={{ fontSize: "0.9rem", color: "#6b6760", lineHeight: 1.8 }}
+                  >
+                    {r.text}
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-11 h-11 rounded-full flex items-center justify-center font-bold flex-shrink-0"
+                      style={{
+                        fontFamily: "Playfair Display, Georgia, serif",
+                        background: "#d0e8e8",
+                        color: "#0a6b70",
+                        fontSize: "1.1rem",
+                      }}
+                    >
+                      {r.initial}
                     </div>
+                    <div>
+                      <div className="font-semibold" style={{ fontSize: "0.9rem" }}>
+                        {r.name}
+                      </div>
+                      <div style={{ fontSize: "0.75rem", color: "#6b6760" }}>{r.city}</div>
+                    </div>
+                  </div>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── LOYALTY ── */}
+      <section style={{ background: "#fdfcf9", padding: "clamp(4rem,8vw,6rem) 24px" }}>
+        <div className="max-w-3xl mx-auto text-center">
+          <FadeUp>
+            <div
+              className="text-xs font-bold uppercase tracking-widest mb-3"
+              style={{ color: "#0a6b70" }}
+            >
+              Программа лояльности
+            </div>
+          </FadeUp>
+          <FadeUp>
+            <h2
+              className="font-bold mb-3"
+              style={{
+                fontFamily: "Playfair Display, Georgia, serif",
+                fontSize: "clamp(2rem,4vw,3rem)",
+              }}
+            >
+              Возвращайся — получай больше
+            </h2>
+          </FadeUp>
+          <FadeUp>
+            <p className="mb-12 mx-auto" style={{ fontSize: "1.05rem", color: "#6b6760" }}>
+              Наши гости — это семья. И мы заботимся о тех, кто выбирает нас снова и снова.
+            </p>
+          </FadeUp>
+
+          <div className="grid sm:grid-cols-2 gap-5 text-left">
+            {[
+              {
+                icon: "🎁",
+                title: "Скидка 10% на второй заезд",
+                text: "Автоматически применяется при следующем бронировании — достаточно назвать своё имя.",
+              },
+              {
+                icon: "👥",
+                title: "Акция «Приведи друга»",
+                text: "−15% вам обоим при одновременном бронировании. Чем больше компания — тем веселее!",
+              },
+              {
+                icon: "🎂",
+                title: "Подарок в день рождения",
+                text: "Сюрприз в номере при заезде в день рождения. Мы помним о вас!",
+              },
+              {
+                icon: "⭐",
+                title: "Статус «Свой гость»",
+                text: "Приоритетное бронирование на следующий сезон. Ваши любимые домики — за вами.",
+              },
+            ].map((l, i) => (
+              <FadeUp key={l.title} style={{ transitionDelay: `${(i % 2) * 80}ms` }}>
+                <div
+                  className="rounded-2xl p-6 flex gap-4 items-start"
+                  style={{ background: "#f7f5f0", border: "1px solid #ddd9d0" }}
+                >
+                  <div className="text-2xl flex-shrink-0 leading-tight">{l.icon}</div>
+                  <div>
+                    <div className="font-semibold mb-1">{l.title}</div>
+                    <p style={{ fontSize: "0.875rem", color: "#6b6760", lineHeight: 1.65 }}>
+                      {l.text}
+                    </p>
+                  </div>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── BOOKING FORM ── */}
+      <section
+        id="booking"
+        className="relative overflow-hidden"
+        style={{ background: "#0a6b70", padding: "clamp(4rem,8vw,6rem) 24px" }}
+      >
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+            backgroundSize: "48px 48px",
+          }}
+        />
+
+        <div className="relative z-10 max-w-3xl mx-auto">
+          <div
+            className="text-xs font-bold uppercase tracking-widest mb-4 text-center"
+            style={{ color: "rgba(255,255,255,0.6)" }}
+          >
+            Бронирование
+          </div>
+          <h2
+            className="font-bold text-white text-center mb-3"
+            style={{
+              fontFamily: "Playfair Display, Georgia, serif",
+              fontSize: "clamp(2rem,4vw,3rem)",
+            }}
+          >
+            Забронируй своё место
+            <br />
+            на лето прямо сейчас
+          </h2>
+          <p className="text-center mb-2" style={{ color: "rgba(255,255,255,0.75)", fontSize: "1.05rem" }}>
+            При бронировании сегодня —{" "}
+            <strong className="text-white">бесплатный ранний заезд</strong> в подарок
+          </p>
+          <div
+            className="flex items-center justify-center gap-2 mb-10"
+            style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.875rem" }}
+          >
+            <div className="w-2 h-2 rounded-full pulse-dot flex-shrink-0" style={{ background: "#4ade80" }} />
+            В июле свободно только 6 домиков — не откладывай
+          </div>
+
+          {sent ? (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">✅</div>
+              <h3
+                className="font-bold text-white text-2xl mb-3"
+                style={{ fontFamily: "Playfair Display, Georgia, serif" }}
+              >
+                Заявка отправлена!
+              </h3>
+              <p style={{ color: "rgba(255,255,255,0.7)" }}>
+                Перезвоним в течение 15 минут и зафиксируем ваши даты.
+              </p>
+              <button
+                className="mt-6 text-sm underline"
+                style={{ color: "rgba(255,255,255,0.6)" }}
+                onClick={() => setSent(false)}
+              >
+                Отправить ещё
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                {[
+                  { key: "name", label: "Ваше имя", type: "text", placeholder: "Как к вам обращаться?" },
+                  { key: "phone", label: "Телефон / WhatsApp", type: "tel", placeholder: "+7 (___) ___-__-__" },
+                  { key: "checkin", label: "Дата заезда", type: "date", placeholder: "" },
+                  { key: "guests", label: "Количество гостей", type: "number", placeholder: "2" },
+                ].map((field) => (
+                  <div key={field.key}>
+                    <label
+                      className="block text-xs font-semibold uppercase tracking-wider mb-2"
+                      style={{ color: "rgba(255,255,255,0.7)" }}
+                    >
+                      {field.label}
+                    </label>
+                    <input
+                      type={field.type}
+                      placeholder={field.placeholder}
+                      value={form[field.key as keyof typeof form]}
+                      onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+                      required={field.key === "name" || field.key === "phone"}
+                      className="w-full rounded-xl outline-none transition-all"
+                      style={{
+                        background: "rgba(255,255,255,0.14)",
+                        border: "1px solid rgba(255,255,255,0.22)",
+                        padding: "14px 18px",
+                        fontSize: "1rem",
+                        fontFamily: "Inter, sans-serif",
+                        color: "#fff",
+                      }}
+                    />
                   </div>
                 ))}
               </div>
-            </AnimatedSection>
 
-            <AnimatedSection className="flex justify-center">
-              <div className="relative w-80 h-80">
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#00F5FF]/20 to-[#FF006E]/20 blur-xl animate-gradient-shift" style={{ backgroundSize: "200% 200%" }} />
-                <div className="relative glass rounded-3xl w-full h-full flex flex-col items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#00F5FF]/5 to-[#FF006E]/5" />
-                  <div className="relative z-10 text-center p-8">
-                    <div className="text-6xl mb-4 animate-float">🚀</div>
-                    <div className="font-display text-2xl font-bold text-white mb-2">
-                      ПОД КЛЮЧ
-                    </div>
-                    <div className="text-white/50 text-sm">
-                      Полный цикл
-                      <br />
-                      от идеи до результата
-                    </div>
-                    <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00F5FF]/10 border border-[#00F5FF]/20">
-                      <div className="w-2 h-2 rounded-full bg-[#00F5FF] animate-pulse" />
-                      <span className="text-[#00F5FF] text-xs font-medium">
-                        Доступно сейчас
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
-
-      {/* BENEFITS */}
-      <section id="benefits" className="py-24 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-0 w-96 h-96 rounded-full bg-[#00F5FF]/6 blur-[150px]" />
-          <div className="absolute top-1/3 right-0 w-80 h-80 rounded-full bg-[#A855F7]/6 blur-[120px]" />
-        </div>
-
-        <div className="max-w-6xl mx-auto">
-          <AnimatedSection className="text-center mb-16">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="w-8 h-1 bg-[#FFD60A] rounded-full" />
-              <span className="text-[#FFD60A] text-sm font-semibold uppercase tracking-widest">
-                Почему мы
-              </span>
-              <div className="w-8 h-1 bg-[#FFD60A] rounded-full" />
-            </div>
-            <h2 className="font-display text-4xl sm:text-5xl font-bold text-white">
-              НАШИ <span className="text-gradient">ПРЕИМУЩЕСТВА</span>
-            </h2>
-          </AnimatedSection>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {BENEFITS.map((b, i) => (
-              <AnimatedSection key={b.title} className="h-full">
-                <div
-                  className="glass glass-hover rounded-2xl p-6 h-full cursor-default group"
-                  style={{ transitionDelay: `${(i % 3) * 80}ms` }}
+              <div className="mb-4">
+                <label
+                  className="block text-xs font-semibold uppercase tracking-wider mb-2"
+                  style={{ color: "rgba(255,255,255,0.7)" }}
                 >
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
-                    style={{
-                      background: `${b.color}15`,
-                      border: `1px solid ${b.color}30`,
-                    }}
-                  >
-                    <Icon name={b.icon} size={22} style={{ color: b.color }} />
-                  </div>
-                  <h3 className="font-semibold text-white text-base mb-2">
-                    {b.title}
-                  </h3>
-                  <p className="text-white/50 text-sm leading-relaxed">{b.desc}</p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA BANNER */}
-      <section className="py-16 px-6">
-        <AnimatedSection>
-          <div className="max-w-4xl mx-auto relative overflow-hidden rounded-3xl">
-            <div
-              className="absolute inset-0 bg-gradient-to-r from-[#00F5FF]/20 via-[#0080FF]/20 to-[#FF006E]/20 animate-gradient-shift"
-              style={{ backgroundSize: "200% 200%" }}
-            />
-            <div className="absolute inset-0 glass" />
-            <div className="relative z-10 p-10 sm:p-14 text-center">
-              <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
-                ГОТОВЫ НАЧАТЬ?
-              </h2>
-              <p className="text-white/60 mb-8 max-w-lg mx-auto">
-                Оставьте заявку и получите бесплатную консультацию уже сегодня.
-              </p>
-              <button
-                onClick={() =>
-                  document
-                    .querySelector("#contacts")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-                className="px-10 py-4 rounded-full font-bold text-[#0a0f1a] bg-[#00F5FF] hover:scale-105 transition-all duration-300 glow-cyan"
-              >
-                Оставить заявку →
-              </button>
-            </div>
-          </div>
-        </AnimatedSection>
-      </section>
-
-      {/* CONTACTS */}
-      <section id="contacts" className="py-24 px-6 relative overflow-hidden">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-64 rounded-full bg-[#00F5FF]/6 blur-[100px] pointer-events-none" />
-
-        <div className="max-w-5xl mx-auto">
-          <AnimatedSection className="text-center mb-14">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="w-8 h-1 bg-[#00F5FF] rounded-full" />
-              <span className="text-[#00F5FF] text-sm font-semibold uppercase tracking-widest">
-                Напишите нам
-              </span>
-              <div className="w-8 h-1 bg-[#00F5FF] rounded-full" />
-            </div>
-            <h2 className="font-display text-4xl sm:text-5xl font-bold text-white">
-              СВЯЗАТЬСЯ <span className="text-gradient-cyan">С НАМИ</span>
-            </h2>
-          </AnimatedSection>
-
-          <div className="grid md:grid-cols-2 gap-10">
-            <AnimatedSection>
-              <div className="space-y-6">
-                <div className="glass rounded-2xl p-6">
-                  <h3 className="font-semibold text-white text-lg mb-4">
-                    Контактная информация
-                  </h3>
-                  {[
-                    { icon: "Phone", label: "Телефон", value: "+7 (800) 000-00-00" },
-                    { icon: "Mail", label: "Email", value: "hello@company.ru" },
-                    { icon: "MapPin", label: "Адрес", value: "Москва, ул. Примерная, 1" },
-                    { icon: "Clock", label: "Режим работы", value: "Пн–Пт, 9:00–18:00" },
-                  ].map((c) => (
-                    <div
-                      key={c.label}
-                      className="flex items-center gap-4 py-3 border-b border-white/5 last:border-0"
-                    >
-                      <div className="w-9 h-9 rounded-lg bg-[#00F5FF]/10 flex items-center justify-center flex-shrink-0">
-                        <Icon name={c.icon} size={16} className="text-[#00F5FF]" />
-                      </div>
-                      <div>
-                        <div className="text-xs text-white/40">{c.label}</div>
-                        <div className="text-white text-sm font-medium">{c.value}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="glass rounded-2xl p-6">
-                  <h3 className="font-semibold text-white text-sm mb-3">
-                    Мы в соцсетях
-                  </h3>
-                  <div className="flex gap-3">
-                    {[
-                      { icon: "Send", label: "Telegram" },
-                      { icon: "MessageCircle", label: "WhatsApp" },
-                      { icon: "Camera", label: "Instagram" },
-                    ].map((s) => (
-                      <button
-                        key={s.label}
-                        className="w-10 h-10 rounded-xl glass flex items-center justify-center text-white/60 hover:text-[#00F5FF] transition-all duration-200"
-                        title={s.label}
-                      >
-                        <Icon name={s.icon} size={18} />
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                  Пожелания (необязательно)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Романтик, семья с детьми, компания друзей..."
+                  value={form.comment}
+                  onChange={(e) => setForm({ ...form, comment: e.target.value })}
+                  className="w-full rounded-xl outline-none"
+                  style={{
+                    background: "rgba(255,255,255,0.14)",
+                    border: "1px solid rgba(255,255,255,0.22)",
+                    padding: "14px 18px",
+                    fontSize: "1rem",
+                    fontFamily: "Inter, sans-serif",
+                    color: "#fff",
+                  }}
+                />
               </div>
-            </AnimatedSection>
 
-            <AnimatedSection>
-              {sent ? (
-                <div className="glass rounded-2xl p-10 flex flex-col items-center justify-center text-center h-full min-h-[300px]">
-                  <div className="text-5xl mb-4">✅</div>
-                  <h3 className="font-display text-2xl font-bold text-white mb-2">
-                    ОТПРАВЛЕНО!
-                  </h3>
-                  <p className="text-white/50">
-                    Мы свяжемся с вами в ближайшее время.
-                  </p>
-                  <button
-                    className="mt-6 text-sm text-[#00F5FF] hover:underline"
-                    onClick={() => setSent(false)}
-                  >
-                    Отправить ещё
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="glass rounded-2xl p-6 space-y-4">
-                  <h3 className="font-semibold text-white text-lg mb-2">
-                    Оставить заявку
-                  </h3>
-                  <div>
-                    <label className="block text-xs text-white/40 mb-1.5 uppercase tracking-wide">
-                      Ваше имя
-                    </label>
-                    <input
-                      required
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="Иван Петров"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 text-sm focus:outline-none focus:border-[#00F5FF]/50 transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-white/40 mb-1.5 uppercase tracking-wide">
-                      Телефон
-                    </label>
-                    <input
-                      required
-                      value={form.phone}
-                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      placeholder="+7 (999) 000-00-00"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 text-sm focus:outline-none focus:border-[#00F5FF]/50 transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-white/40 mb-1.5 uppercase tracking-wide">
-                      Сообщение
-                    </label>
-                    <textarea
-                      rows={4}
-                      value={form.message}
-                      onChange={(e) =>
-                        setForm({ ...form, message: e.target.value })
-                      }
-                      placeholder="Расскажите о вашем проекте..."
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 text-sm focus:outline-none focus:border-[#00F5FF]/50 transition-all resize-none"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full py-4 rounded-xl font-semibold bg-[#00F5FF] text-[#0a0f1a] hover:bg-white transition-all duration-300 hover:scale-[1.02] glow-cyan"
-                  >
-                    Отправить заявку
-                  </button>
-                  <p className="text-center text-xs text-white/25">
-                    Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
-                  </p>
-                </form>
-              )}
-            </AnimatedSection>
-          </div>
+              <button
+                type="submit"
+                className="w-full rounded-full font-bold transition-all mt-2 hover:opacity-90"
+                style={{
+                  background: "#fff",
+                  color: "#0a6b70",
+                  padding: "18px",
+                  fontSize: "1rem",
+                }}
+              >
+                📩 Отправить заявку — это бесплатно
+              </button>
+              <p
+                className="text-center mt-3"
+                style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.45)" }}
+              >
+                Перезвоним в течение 15 минут и зафиксируем ваши даты ✓
+              </p>
+            </form>
+          )}
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="border-t border-white/5 py-8 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="font-display text-lg font-bold text-gradient-cyan">БРЕНД</div>
-          <div className="text-white/30 text-xs text-center">
-            © 2026 Компания. Все права защищены.
-          </div>
-          <div className="flex gap-6">
-            {NAV_LINKS.map((l) => (
-              <button
-                key={l.href}
-                onClick={() => scrollTo(l.href)}
-                className="text-xs text-white/30 hover:text-white/70 transition-colors"
+      {/* ── FOOTER ── */}
+      <footer
+        style={{
+          background: "#1a1712",
+          color: "#fff",
+          padding: "clamp(3rem,6vw,5rem) 24px 2rem",
+        }}
+      >
+        <div className="max-w-6xl mx-auto">
+          <div
+            className="grid md:grid-cols-3 gap-12 mb-12 pb-12"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}
+          >
+            <div>
+              <div
+                className="font-bold mb-1"
+                style={{
+                  fontFamily: "Playfair Display, Georgia, serif",
+                  fontSize: "1.4rem",
+                }}
               >
-                {l.label}
-              </button>
-            ))}
+                МоёМоре
+              </div>
+              <div
+                className="text-xs uppercase tracking-widest mb-6"
+                style={{ color: "rgba(255,255,255,0.35)" }}
+              >
+                База отдыха у моря
+              </div>
+              <p
+                style={{
+                  fontSize: "0.9rem",
+                  color: "rgba(255,255,255,0.5)",
+                  lineHeight: 1.75,
+                  maxWidth: "38ch",
+                }}
+              >
+                Летний отдых у моря с июня по сентябрь. Собственный пляж, уютные домики,
+                баня и всё для настоящего перезагруза.
+              </p>
+            </div>
+
+            <div>
+              <div
+                className="text-xs font-bold uppercase tracking-widest mb-5"
+                style={{ color: "rgba(255,255,255,0.35)" }}
+              >
+                Навигация
+              </div>
+              <ul className="flex flex-col gap-3">
+                {[
+                  ["for-whom", "Для кого"],
+                  ["services", "Услуги"],
+                  ["packages", "Пакеты"],
+                  ["reviews", "Отзывы"],
+                  ["booking", "Забронировать"],
+                ].map(([id, label]) => (
+                  <li key={id}>
+                    <button
+                      onClick={() => scrollTo(id)}
+                      className="transition-colors hover:text-white"
+                      style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)" }}
+                    >
+                      {label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <div
+                className="text-xs font-bold uppercase tracking-widest mb-5"
+                style={{ color: "rgba(255,255,255,0.35)" }}
+              >
+                Контакты
+              </div>
+              <div className="flex flex-col gap-3">
+                {[
+                  "📍 Приморский край, залив Владимира",
+                  "📞 +7 (423) 000-00-00",
+                  "💬 WhatsApp / Telegram",
+                  "🕐 Администратор: 8:00–22:00",
+                ].map((c) => (
+                  <div key={c} style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)" }}>
+                    {c}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.3)" }}>
+              © 2026 МоёМоре. Все права защищены.
+            </span>
+            <div className="flex gap-3">
+              {["📸", "💙", "✈️"].map((emoji, i) => (
+                <button
+                  key={i}
+                  className="w-9 h-9 rounded-full flex items-center justify-center transition-all text-sm hover:bg-white/20"
+                  style={{ background: "rgba(255,255,255,0.08)" }}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </footer>

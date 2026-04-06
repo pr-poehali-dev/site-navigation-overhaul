@@ -4,33 +4,33 @@
 
 @layer base {
   :root {
-    --background: 220 20% 5%;
-    --foreground: 0 0% 96%;
+    --background: 40 25% 97%;
+    --foreground: 35 15% 10%;
 
-    --card: 220 20% 8%;
-    --card-foreground: 0 0% 96%;
+    --card: 0 0% 100%;
+    --card-foreground: 35 15% 10%;
 
-    --popover: 220 20% 8%;
-    --popover-foreground: 0 0% 96%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 35 15% 10%;
 
-    --primary: 185 100% 50%;
-    --primary-foreground: 220 20% 5%;
+    --primary: 183 83% 24%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 20% 12%;
-    --secondary-foreground: 0 0% 96%;
+    --secondary: 40 20% 92%;
+    --secondary-foreground: 35 15% 20%;
 
-    --muted: 220 20% 12%;
-    --muted-foreground: 220 10% 55%;
+    --muted: 40 15% 90%;
+    --muted-foreground: 35 10% 45%;
 
-    --accent: 330 100% 56%;
+    --accent: 36 93% 44%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 20% 15%;
-    --input: 220 20% 12%;
-    --ring: 185 100% 50%;
+    --border: 40 15% 83%;
+    --input: 40 15% 88%;
+    --ring: 183 83% 24%;
 
     --radius: 0.5rem;
 
@@ -95,88 +95,92 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+
   body {
     @apply bg-background text-foreground;
-    font-family: "Golos Text", sans-serif;
+    font-family: "Inter", "Helvetica Neue", sans-serif;
+    line-height: 1.65;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Playfair Display", Georgia, serif;
+    line-height: 1.15;
   }
 }
 
 @layer utilities {
-  .text-gradient {
-    background: linear-gradient(135deg, #00f5ff 0%, #ff006e 50%, #ffd60a 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .font-display {
+    font-family: "Playfair Display", Georgia, serif;
   }
 
-  .text-gradient-cyan {
-    background: linear-gradient(135deg, #00f5ff 0%, #0080ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .glass {
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .glass-hover {
-    transition: all 0.3s ease;
-  }
-
-  .glass-hover:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(0, 245, 255, 0.3);
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0, 245, 255, 0.1);
-  }
-
-  .glow-cyan {
-    box-shadow:
-      0 0 30px rgba(0, 245, 255, 0.3),
-      0 0 60px rgba(0, 245, 255, 0.1);
-  }
-
-  .glow-pink {
-    box-shadow:
-      0 0 30px rgba(255, 0, 110, 0.3),
-      0 0 60px rgba(255, 0, 110, 0.1);
-  }
-
-  .noise-bg {
-    position: relative;
-  }
-
-  .noise-bg::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .delay-100 {
-    animation-delay: 0.1s;
-  }
-  .delay-200 {
-    animation-delay: 0.2s;
-  }
-  .delay-300 {
-    animation-delay: 0.3s;
-  }
-  .delay-400 {
-    animation-delay: 0.4s;
-  }
-  .delay-500 {
-    animation-delay: 0.5s;
-  }
-  .delay-600 {
-    animation-delay: 0.6s;
-  }
-  .opacity-0 {
+  /* Scroll reveal */
+  .fade-up {
     opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.65s ease,
+      transform 0.65s ease;
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Card hover lift */
+  .card-hover {
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .card-hover:hover {
+    box-shadow: 0 12px 40px rgba(10, 20, 15, 0.14);
+    transform: translateY(-3px);
+  }
+
+  /* Primary glow */
+  .btn-sea-glow:hover {
+    box-shadow: 0 8px 32px rgba(10, 107, 112, 0.4);
+  }
+
+  /* Urgency dot pulse */
+  @keyframes urgency-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  .pulse-dot {
+    animation: urgency-pulse 2s ease infinite;
+  }
+
+  /* Gallery zoom */
+  .gallery-item {
+    overflow: hidden;
+  }
+
+  .gallery-item img {
+    transition: transform 0.5s ease;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gallery-item:hover img {
+    transform: scale(1.05);
   }
 }
