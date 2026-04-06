@@ -1010,7 +1010,7 @@ export default function Index() {
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
                 {[
                   { key: "name", label: "Ваше имя", type: "text", placeholder: "Как к вам обращаться?" },
-                  { key: "phone", label: "Телефон / WhatsApp", type: "tel", placeholder: "+7 (___) ___-__-__" },
+                  { key: "phone", label: "Телефон / WhatsApp", type: "tel", placeholder: "+7 (984) 153-17-11" },
                   { key: "checkin", label: "Дата заезда", type: "date", placeholder: "" },
                   { key: "guests", label: "Количество гостей", type: "number", placeholder: "2" },
                 ].map((field) => (
@@ -1168,8 +1168,8 @@ export default function Index() {
               <div className="flex flex-col gap-3">
                 {[
                   "📍 Приморский край, залив Владимира",
-                  "📞 +7 (423) 000-00-00",
-                  "💬 WhatsApp / Telegram",
+                  "📞 +7 (984) 153-17-11",
+                  "💬 WhatsApp / Telegram: 89841531711",
                   "🕐 Администратор: 8:00–22:00",
                 ].map((c) => (
                   <div key={c} style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)" }}>
