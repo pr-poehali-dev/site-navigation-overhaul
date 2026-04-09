@@ -40,8 +40,12 @@ function FadeUp({
   );
 }
 
+const API_URL = "https://functions.poehali.dev/f939cbe2-c21e-480d-929e-893b813148be";
+
 export default function Index() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -55,9 +59,23 @@ export default function Index() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error("server error");
+      setSent(true);
+    } catch {
+      setError("Не удалось отправить заявку. Позвоните нам: +7 (984) 153-17-11");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -1065,9 +1083,17 @@ export default function Index() {
                 />
               </div>
 
+              {error && (
+                <p className="text-center mb-3 rounded-xl px-4 py-3"
+                  style={{ background: "rgba(255,80,80,0.18)", color: "#fca5a5", fontSize: "0.875rem" }}>
+                  {error}
+                </p>
+              )}
+
               <button
                 type="submit"
-                className="w-full rounded-full font-bold transition-all mt-2 hover:opacity-90"
+                disabled={loading}
+                className="w-full rounded-full font-bold transition-all mt-2 hover:opacity-90 disabled:opacity-60"
                 style={{
                   background: "#fff",
                   color: "#0a6b70",
@@ -1075,7 +1101,7 @@ export default function Index() {
                   fontSize: "1rem",
                 }}
               >
-                📩 Отправить заявку — это бесплатно
+                {loading ? "Отправляем..." : "📩 Отправить заявку — это бесплатно"}
               </button>
               <p
                 className="text-center mt-3"
