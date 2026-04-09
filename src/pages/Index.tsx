@@ -1028,7 +1028,7 @@ export default function Index() {
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
                 {[
                   { key: "name", label: "Ваше имя", type: "text", placeholder: "Как к вам обращаться?" },
-                  { key: "phone", label: "Телефон / WhatsApp", type: "tel", placeholder: "+7 (984) 153-17-11" },
+                  { key: "phone", label: "Телефон / WhatsApp", type: "tel", placeholder: "+7 (000) 000-00-00" },
                   { key: "checkin", label: "Дата заезда", type: "date", placeholder: "" },
                   { key: "guests", label: "Количество гостей", type: "number", placeholder: "2" },
                 ].map((field) => (
