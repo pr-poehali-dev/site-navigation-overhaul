@@ -106,7 +106,7 @@ export default function Index() {
                 className="font-bold leading-tight"
                 style={{ fontFamily: "Playfair Display, Georgia, serif", fontSize: "1.1rem" }}
               >
-                МоёМоре
+                ВалКирия
               </div>
               <div className="text-xs uppercase tracking-widest" style={{ color: "#6b6760" }}>
                 База отдыха
@@ -1111,7 +1111,7 @@ export default function Index() {
                   fontSize: "1.4rem",
                 }}
               >
-                МоёМоре
+                ВалКирия
               </div>
               <div
                 className="text-xs uppercase tracking-widest mb-6"
@@ -1184,7 +1184,7 @@ export default function Index() {
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.3)" }}>
-              © 2026 МоёМоре. Все права защищены.
+              © 2026 ВалКирия. Все права защищены.
             </span>
             <div className="flex gap-3">
               {["📸", "💙", "✈️"].map((emoji, i) => (
