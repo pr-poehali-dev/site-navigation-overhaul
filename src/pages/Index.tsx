@@ -1059,30 +1059,6 @@ export default function Index() {
                 ))}
               </div>
 
-              <div className="mb-4">
-                <label
-                  className="block text-xs font-semibold uppercase tracking-wider mb-2"
-                  style={{ color: "rgba(255,255,255,0.7)" }}
-                >
-                  Пожелания (необязательно)
-                </label>
-                <input
-                  type="text"
-                  placeholder="Романтик, семья с детьми, компания друзей..."
-                  value={form.comment}
-                  onChange={(e) => setForm({ ...form, comment: e.target.value })}
-                  className="w-full rounded-xl outline-none"
-                  style={{
-                    background: "rgba(255,255,255,0.14)",
-                    border: "1px solid rgba(255,255,255,0.22)",
-                    padding: "14px 18px",
-                    fontSize: "1rem",
-                    fontFamily: "Inter, sans-serif",
-                    color: "#fff",
-                  }}
-                />
-              </div>
-
               {error && (
                 <p className="text-center mb-3 rounded-xl px-4 py-3"
                   style={{ background: "rgba(255,80,80,0.18)", color: "#fca5a5", fontSize: "0.875rem" }}>
